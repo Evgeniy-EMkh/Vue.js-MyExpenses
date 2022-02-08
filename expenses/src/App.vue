@@ -6,6 +6,8 @@
       <div class="title">My personal cost</div>
     </header>
     <main>
+      TOTAL: {{getFullPaymentValue}}
+      <hr />
       <br />
       <button @click="clicked">ADD NEW COST+</button>
       <br />
@@ -22,6 +24,7 @@
 <script>
   import PaymentsDisplay from './components/PaymentsDisplay.vue'
   import AddPaymentForm from './components/AddPaymentForm.vue'
+  import { mapMutations, mapActions, mapGetters } from 'vuex'
 
   export default {
     name: 'App',
@@ -32,44 +35,61 @@
     data() {
       return {
         show: false,
-        paymentsList: [],
         showForm: false,
       };
     },
+    computed: {
+      ...mapGetters([
+        'getFullPaymentValue'
+      ]),
+      paymentsList() {
+        return this.$store.getters.getPaymentsList
+      },
+    },
+
     methods: {
+      ...mapMutations({
+        myMutation: 'setPaymentsListData'
+      }),
+      ...mapActions([
+        'fetchData'
+      ]),
       clicked() {
         this.showForm = this.showForm == false ? true : false;
       },
 
       add(data) {
-        this.paymentsList = [...this.paymentsList, data]
+        this.$store.commit('addDataToPaymentsList', data)
       },
 
-      fetchData() {
-        return [
-          {
-            id: '1',
-            date: '28.03.2020',
-            category: 'Food',
-            value: 169,
-          },
-          {
-            id: '2',
-            date: '24.03.2020',
-            category: 'Transport',
-            value: 360,
-          },
-          {
-            id: '3',
-            date: '24.03.2020',
-            category: 'Food',
-            value: 532,
-          },
-        ]
-      }
+      //fetchData() {
+      //  return [
+      //    {
+      //      id: '1',
+      //      date: '28.03.2020',
+      //      category: 'Food',
+      //      value: 169,
+      //    },
+      //    {
+      //      id: '2',
+      //      date: '24.03.2020',
+      //      category: 'Transport',
+      //      value: 360,
+      //    },
+      //    {
+      //      id: '3',
+      //      date: '24.03.2020',
+      //      category: 'Food',
+      //      value: 532,
+      //    },
+      //  ]
+      //}
     },
     created() {
-      this.paymentsList = this.fetchData()
+      this.fetchData()
+      //this.$store.dispatch('fetchData')
+      //this.$store.commit('setPaymentsListData', this.fetchData())
+      //this.paymentsList = this.fetchData()
     },
   };
 </script>
